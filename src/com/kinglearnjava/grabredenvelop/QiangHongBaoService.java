@@ -1,14 +1,20 @@
 package com.kinglearnjava.grabredenvelop;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
+import android.accessibilityservice.AccessibilityService;
+import android.view.accessibility.AccessibilityEvent;
 
-public class QiangHongBaoService extends Service {
+/**
+ * 抢红包外挂服务
+ * 对照 https://github.com/lendylongli/qianghongbao 所写
+ */
+public class QiangHongBaoService extends AccessibilityService {
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public void onAccessibilityEvent(AccessibilityEvent event) {
+    }
+
+    @Override
+    public void onInterrupt() {
     }
 
 }
