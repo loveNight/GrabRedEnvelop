@@ -27,7 +27,12 @@ public class QiangHongBaoService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         final int eventType = event.getEventType();
+        LogUtil.d(TAG, "事件---->" + event);
         
+        // 通知栏事件
+        if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
+            
+        }
     }
 
     @Override
