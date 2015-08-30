@@ -1,1 +1,1 @@
-正在写QiangHongBaoService
+有重复领取红包的BUG，打算加上未领取标记
