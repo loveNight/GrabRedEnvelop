@@ -9,16 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
-    
-    <TextView 
-        android:id="@+id/prompt_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:text="仅支持Android 4.1以上的版本"
-        android:padding="10dp"
-        android:layout_above="@id/start_button"
-        />
+
 
     <Button
         android:id="@+id/start_button"
@@ -28,5 +19,16 @@
         android:padding="10dp"
         android:text="@string/accessibility_description"
         android:textSize="18sp" />
+    
+        
+    <TextView 
+        android:id="@+id/prompt_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="仅支持Android 4.1以上的版本"
+        android:padding="10dp"
+        android:layout_above="@id/start_button"
+        />
 
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package com.kinglearnjava.grabredenvelop;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;
@@ -28,6 +30,9 @@ public class QiangHongBaoService extends AccessibilityService {
     // 红包消息关键字
     private static final String HONGBAO_TEXT_KEY = "[微信红包]";
     
+    // 已领取红包
+    private Set<String> robbedBonus = new HashSet<String>();
+    
     private Handler handler = new Handler();
 
     /**
@@ -37,7 +42,7 @@ public class QiangHongBaoService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         final int eventType = event.getEventType();
-        LogUtil.d(TAG, "事件---->" + event);
+        LogUtil.d(TAG, "onAccessibilityEvent-----现在触发的事件---->" + event);
         
         // 通知栏事件
         if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
@@ -140,11 +145,12 @@ public class QiangHongBaoService extends AccessibilityService {
     private void getPacket() {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo == null) {
-            LogUtil.w(TAG, "rootWindow为空");
+            LogUtil.w(TAG, "getPacket()------rootWindow为空");
             return;
         }
         List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByText("拆红包");
         for (AccessibilityNodeInfo n :list) {
+            LogUtil.v(TAG + "拆红包", "getPacket()-------->微信红包--------->" + n);
             n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
         }
     }
@@ -156,7 +162,7 @@ public class QiangHongBaoService extends AccessibilityService {
     private void openPacket() {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo == null) {
-            LogUtil.w(TAG, "rootWindow为空");
+            LogUtil.w(TAG + "聊天界面", "openPacket()-------->rootWindow为空");
             return;
         }
         // 找到领取红包的点击事件
@@ -164,21 +170,36 @@ public class QiangHongBaoService extends AccessibilityService {
         if (list.isEmpty()) {
             list = nodeInfo.findAccessibilityNodeInfosByText(HONGBAO_TEXT_KEY);
             for(AccessibilityNodeInfo n : list) {
-                LogUtil.i(TAG, "-->微信红包:" + n);
+                LogUtil.i(TAG + "聊天界面", "openPacket()-->微信红包:使用HONGBAO_TEXT_KEY------>" + n);
                 n.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 break;
             }
         } else {
             // 最新的红包领起
             for (int i = list.size() - 1 ; i >= 0; i--) {
+                // 通过调试可知[领取红包]是text，本身不可被点击，用getParent()获取可被点击的对象
                 AccessibilityNodeInfo parent = list.get(i).getParent();
-                LogUtil.i(TAG, "-->领取红包:" + parent);
-                if (parent != null) {
-                    parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    break;
-                }
+                LogUtil.i(TAG + "聊天界面", "openPacket()---->遍历红包:输出parent------->" + parent);
+                LogUtil.i(TAG + "聊天界面", "openPacket()---->遍历红包:输出list------->" + list.get(i));
+//                LogUtil.e(TAG, "输出Set--->" + robbedBonus);
+//                // 谷歌重写了toString()方法，不能用它获取ClassName@hashCode串
+//                if ( (parent != null) && (!robbedBonus.contains(getOriginToString(parent))) ) {
+//                    robbedBonus.add(getOriginToString(parent));
+//                    parent.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                    LogUtil.e(TAG, "点击红包：" + getOriginToString(parent));
+//                    LogUtil.e(TAG, "输出Set--->" + robbedBonus);
+//                    break; // 只领最新的一个红包
+//                }
             }
         }
+    }
+    
+    /**
+     * Java默认的toString()方法，用于识别是否同一个对象
+     * Android重写了toString()，故自己实现一个
+     */
+    private String getOriginToString(Object o) {
+        return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
     }
 
 }
